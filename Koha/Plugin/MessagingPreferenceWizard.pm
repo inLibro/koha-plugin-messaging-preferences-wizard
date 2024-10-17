@@ -35,14 +35,14 @@ use Data::Dumper;
 use File::Spec;
 use Koha::DateUtils qw ( dt_from_string );
 
-our $VERSION = 1.5;
+our $VERSION = 1.6;
 
 our $metadata = {
     name   => 'Enhanced messaging preferences wizard',
-    author => 'Bouzid Fergani, Alexandre Noël',
+    author => 'Bouzid Fergani, Alexandre Noël, Olivier Vezina',
     description => 'Setup or reset the enhanced messaging preferences to default values',
     date_authored   => '2016-07-13',
-    date_updated    => '2024-07-22',
+    date_updated    => '2024-10-17',
     minimum_version => '22.05.00',
     maximum_version => undef,
     version         => $VERSION,
@@ -96,7 +96,10 @@ sub tool {
 q|SELECT DISTINCT bo.borrowernumber, bo.categorycode FROM borrowers bo
 LEFT JOIN borrower_message_preferences mp USING (borrowernumber)
 WHERE 1|;
-        my $script_path = '../misc/maintenance/borrowers-force-messaging-defaults.pl';
+        my $script_path = '/usr/share/koha/bin/maintenance/borrowers-force-messaging-defaults.pl';
+        if(C4::Context->config("dev_install")){
+            $script_path = '../misc/maintenance/borrowers-force-messaging-defaults.pl';
+        }
         my $command = "perl $script_path --doit";
         if ( $since ) {
             $command .= " --since $since";
